@@ -35,23 +35,30 @@ def handler(ctx, data: io.BytesIO = None):
         print("Contents of the Body for Reference: ", log_body)
         
         # Check if the Configuration values are valid
-        
-        if instance_pool_max_size == 'not-configured':
-            print('INSTANCE_POOL_MAX_SIZE is not configured or its a invalid non integer value. please specify a value between 1 to 100.')
+
+        try:
+          if isinstance(int(instance_pool_max_size), int) and isinstance(int(instance_pool_increment_size), int):
+              print('Valid integer values for INSTANCE_POOL_MAX_SIZE and INSTANCE_POOL_INCREMENT_SIZE supplied ..')
+          else:
+              print('Invalid integer values for INSTANCE_POOL_MAX_SIZE and INSTANCE_POOL_INCREMENT_SIZE supplied ..','max size: ',instance_pool_max_size, ' increment size: ',instance_pool_increment_size)
+              return response.Response(ctx, response_data={'result': 'No action required'},
+                                     headers={"Content-Type": "application/json"})
+        except ValueError as err:
+            print("Value Error: {}".format(str(err)))
             return response.Response(ctx, response_data={'result': 'No action required'},
                                      headers={"Content-Type": "application/json"})
-            
-        if isinstance(instance_pool_max_size, int) and isinstance(instance_pool_increment_size):
-            print('Valid integer values for INSTANCE_POOL_MAX_SIZE and INSTANCE_POOL_INCREMENT_SIZE supplied ..')
-        else:
-            print('Invalid integer values for INSTANCE_POOL_MAX_SIZE and INSTANCE_POOL_INCREMENT_SIZE supplied ..')
-            return response.Response(ctx, response_data={'result': 'No action required'},
-                                     headers={"Content-Type": "application/json"})
-        
-        if (0 < instance_pool_max_size <= 100):
+    
+        if (0 < int(instance_pool_max_size) <= 100):
             print('INSTANCE_POOL_MAX_SIZE is within the acceptable hard limit of 1-100')
         else:
             print('INSTANCE_POOL_MAX_SIZE is not within the acceptable hard limit of 1-100')
+            return response.Response(ctx, response_data={'result': 'No action required'},
+                                     headers={"Content-Type": "application/json"})
+        
+        if (0 < int(instance_pool_increment_size) <= 10):
+            print('INSTANCE_POOL_INCREMENT_SIZE is within the acceptable hard limit of 1-10')
+        else:
+            print('INSTANCE_POOL_INCREMENT_SIZE is not within the acceptable hard limit of 1-10')
             return response.Response(ctx, response_data={'result': 'No action required'},
                                      headers={"Content-Type": "application/json"})
              
@@ -77,14 +84,13 @@ def handler(ctx, data: io.BytesIO = None):
             return response.Response(ctx, response_data={'result': 'Instance Pool not in RUNNING state, Not Scaling'},
                                      headers={"Content-Type": "application/json"})
         
-        if instance_pool_increment_size == 'not-configured' or (not isinstance(instance_pool_increment_size, int)):
-            increased_pool_size = instance_pool.size + 1
-        elif (instance_pool.size + instance_pool_increment_size) > instance_pool_max_size:
+        if (instance_pool.size + int(instance_pool_increment_size)) > int(instance_pool_max_size):
             print('Instance pool size: ',instance_pool.size,'+', instance_pool_increment_size,' is greater than max pool limit ',instance_pool_max_size)
             print('Just incrementing the pool size by 1')
             increased_pool_size = instance_pool.size + 1
         else:
-            increased_pool_size = instance_pool.size + instance_pool_increment_size
+            print('Incrementing the pool size by ',int(instance_pool_increment_size))
+            increased_pool_size = instance_pool.size + int(instance_pool_increment_size)
             
         update_details = UpdateInstancePoolDetails(size=increased_pool_size)
         composite_client.update_instance_pool_and_wait_for_state(instance_pool.id, update_details,

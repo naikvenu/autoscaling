@@ -30,32 +30,29 @@ def handler(ctx, data: io.BytesIO = None):
     try:
         print('Fn BEGIN: Apache Scale In Function Invoked')
         log_body = data.getvalue()
-
         #print('context: ', dir(ctx), 'Body: ',len(log_body), 'body ops:', dir(log_body))
         print("Contents of the body for reference: ", log_body)
         
         # Check if the Configuration values are valid
-        
-        if instance_pool_min_size == 'not-configured' :
-            print('INSTANCE_POOL_MIN_SIZE is not configured. Nothing to do.')
+        try:
+          if isinstance(int(instance_pool_min_size), int) :
+              print('Valid integer value for INSTANCE_POOL_MIN_SIZE supplied ..')
+          else:
+              print('Invalid integer value for INSTANCE_POOL_MIN_SIZE supplied ..','min size: ',instance_pool_min_size)
+              return response.Response(ctx, response_data={'result': 'No action required'},
+                                     headers={"Content-Type": "application/json"})
+        except ValueError as err:
+            print("Value Error: {}".format(str(err)))
             return response.Response(ctx, response_data={'result': 'No action required'},
                                      headers={"Content-Type": "application/json"})
-        
-        if isinstance(instance_pool_min_size, int):
-            print('Valid integer value for INSTANCE_POOL_MIN_SIZE supplied ..')
-        else:
-            print('Invalid integer value for INSTANCE_POOL_MIN_SIZE supplied ..')
-            return response.Response(ctx, response_data={'result': 'No action required'},
-                                     headers={"Content-Type": "application/json"})
-        
-        # Check if instance_pool size is at its minimum and maximum
+
+        # Check if instance_pool size is at its minimum
         if int(instance_pool_min_size) <= 1:
             resp = 'Instance pool Min size supplied is less than or equal to 1. Please provide Min Pool size of 2 and above.'
             print(resp)
             return response.Response(ctx, response_data={'result': resp + ' Not Scaling In'},
                                      headers={"Content-Type": "application/json"})
   
-        
         signer = oci.auth.signers.get_resource_principals_signer()
         compute_management_client = ComputeManagementClient(config={}, signer=signer)
         composite_client = ComputeManagementClientCompositeOperations(compute_management_client)
@@ -65,7 +62,6 @@ def handler(ctx, data: io.BytesIO = None):
         print('Instance pool size: ',instance_pool.size,'Instance pool Name: ',\
             instance_pool.display_name, 'instance pool id: ', instance_pool_id)
         
-    
         # Check if instance_pool lifecycle_state is not RUNNING
         if instance_pool.lifecycle_state != "RUNNING":
             print('Instance pool is in state: ', {instance_pool.lifecycle_state},'. No further action.')
@@ -89,7 +85,3 @@ def handler(ctx, data: io.BytesIO = None):
     except Exception as err:
         print("Error in handler: {}".format(str(err)))
         raise err
-
-
-
-

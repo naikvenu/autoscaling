@@ -61,6 +61,12 @@ def handler(ctx, data: io.BytesIO = None):
 
         print('Instance pool size: ',instance_pool.size,'Instance pool Name: ',\
             instance_pool.display_name, 'instance pool id: ', instance_pool_id)
+
+        # Check if instance_pool size is below the hard limit of 2
+        if instance_pool.size < 2:
+            print('The instance pool initial size is hard limited not to be below 2. Please increase the current pool size of ',instance_pool.size, ' to a value greater than 2 and try again..')
+            return response.Response(ctx, response_data={'result': 'Not Scaling In'},
+                                     headers={"Content-Type": "application/json"})
         
         # Check if instance_pool lifecycle_state is not RUNNING
         if instance_pool.lifecycle_state != "RUNNING":

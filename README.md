@@ -1,6 +1,6 @@
 # Compute Instance custom metric based Autoscaling using Serverless Functions
 
-In this document we will look at Metric based autoscaling on a custom metric.
+In this document we will look at Metric based autoscaling on custom metrics.
 
 About Instance Pools:
 In OCI, Instance Pools are used to create and manage multiple compute instances within the same region as a group. We can attach a load balancers to the pool, stop all instances in a pool, increase or decrease the size of the pool (a.k.a scale) and so on. 
@@ -38,6 +38,8 @@ Follow the steps provided here:
 https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/updatinginstancepool_topic-To_attach_a_load_balancer_to_an_instance_pool.htm
 
 # Access the Application
+
+On your browser access the application using load balancer or instance public IP http://<Load-Balancer-IP>
 
 # Deploy OCI Serverless Function
 
@@ -99,10 +101,17 @@ If yes, then proceed to creating Alarm definitions.
    d. Select target as scale-in notification topic
 
 
-# Testing Scaling
+# Test Scaling
 
 For this create another instance and call it load generator
 $ sudo dnf install -y httpd
+
+We can use apache benchmark tool to introduce some load:
+
+$ ab -n 5000 -c 50 http://152.69.172.0:80/index.php 
+
+-n indicates the number of requests
+-c is the concurrency
 
 
 

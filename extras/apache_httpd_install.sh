@@ -1,3 +1,9 @@
+## Copyright (c) 2022 Oracle and/or its affiliates.
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
+
+#Disclaimer:
+#This script is provided for experimental purposes only and should not be used in production. 
+
 # Install Apache, this is only required for demo purpose.
 # Check if the script is running with superuser privileges
 

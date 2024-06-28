@@ -1,3 +1,11 @@
+## Copyright (c) 2022 Oracle and/or its affiliates.
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
+
+#Disclaimer:
+#This script is provided for experimental purposes only and should not be used in production. 
+#The script has been tested in a test environment and appears to work as intended. 
+#You should always run new scripts on a test environment and validate and modify the same as per your requirements before using on your application environment.
+ 
 #!/bin/bash
 
 :<<'COMMENT'

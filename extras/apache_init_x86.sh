@@ -1,7 +1,8 @@
 ## Copyright (c) 2022 Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
-# Author: Venugopal Naik (venugopal.naik@oracle.com)
+#Disclaimer:
+#This script is provided for experimental purposes only and should not be used in production. 
 
 artifact_path=/home/opc/artifacts
 tmp_path=/tmp/artifacts

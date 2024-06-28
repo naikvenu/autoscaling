@@ -3,7 +3,6 @@
 
 #Disclaimer:
 #This script is provided for experimental purposes only and should not be used in production. 
-# It is provided to assist your development or administration efforts and provided “AS IS” and is NOT supported by Oracle Corporation. 
 #The script has been tested in a test environment and appears to work as intended. You should always run new scripts on a test environment and validate and modify the same as per your requirements before using on your application environment.
  
 import io
